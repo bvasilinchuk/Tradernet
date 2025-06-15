@@ -36,6 +36,13 @@ extension MainPresenter: MainInteractorOutputProtocol {
     func receievedQuote(_ quote: QuoteViewModel) {
         let current = quotes[quote.ticker]
         let updated = current?.merging(with: quote.model) ?? quote
+        if let current = current {
+            if updated.changePercent > current.changePercent {
+                updated.percentChangeType = .positive
+            } else if updated.changePercent < current.changePercent {
+                updated.percentChangeType = .negative
+            }
+        }
         quotes[quote.ticker] = updated
 
         let sortedQuotes = quotes.values.sorted { $0.ticker < $1.ticker }

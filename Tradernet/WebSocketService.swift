@@ -170,8 +170,9 @@ class QuoteViewModel {
     let exchange: String
     let lastPrice: String
     let changeValue: String
-    let changePercent: String
+    let changePercent: Double
     let isPositiveChange: Bool
+    var percentChangeType: PercentChangeType = .noChange
     let model: QuoteModel
 
     init(model: QuoteModel) {
@@ -193,15 +194,13 @@ class QuoteViewModel {
         }
 
         if let pcp = model.percentChange {
-            self.changePercent = String(format: "%+.2f%%", pcp)
+            self.changePercent = pcp
             self.isPositiveChange = pcp >= 0
         } else {
-            self.changePercent = ""
+            self.changePercent = 0
             self.isPositiveChange = true
         }
     }
-    
-    
 }
 
 extension QuoteViewModel {
@@ -218,4 +217,10 @@ extension QuoteViewModel {
             volume: newModel.volume ?? model.volume
         ))
     }
+}
+
+enum PercentChangeType {
+    case positive
+    case negative
+    case noChange
 }
