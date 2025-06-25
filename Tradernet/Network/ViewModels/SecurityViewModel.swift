@@ -1,13 +1,9 @@
-struct QuoteViewModel {
-    let ticker: String
-    let displayName: String
-    let formattedPrice: String
+struct SecurityViewModel {
+    let tickers: [String]
 }
 
-extension QuoteViewModel {
-    init(from security: Security) {
-        self.ticker = security.symbol
-        self.displayName = security.name ?? "Unknown"
-        self.formattedPrice = security.price.map { String(format: "%.2f ₽", $0) } ?? "-"
+extension SecurityViewModel {
+    init(from securities: SecuritiesModel) {
+        self.tickers = securities.tickers ?? []
     }
 }

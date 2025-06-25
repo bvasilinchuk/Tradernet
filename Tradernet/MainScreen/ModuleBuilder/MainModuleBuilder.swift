@@ -1,13 +1,10 @@
-//
-//  MainRouter.swift
-//  Tradernet
-//
-//  Created by Bogdan Vasilinchuk on 6/25/25.
-//
+import UIKit
 
-
-class MainRouter: MainRouterProtocol {
-    static func createModule(socketService: QuotesWebSocketServiceProtocol, networkService: NetworkServiceProtocol) -> UIViewController {
+class MainModuleBuilder {
+    static func createModule() -> UIViewController {
+        let socketService = QuotesWebSocketService()
+        let networkService = NetworkService()
+        
         let presenter = MainPresenter()
         let view = MainViewController(presenter: presenter)
         let interactor = MainInteractor(socketService: socketService, networkService: networkService)

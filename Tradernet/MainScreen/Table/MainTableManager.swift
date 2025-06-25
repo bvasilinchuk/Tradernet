@@ -1,15 +1,8 @@
-//
-//  MainTableViewManager.swift
-//  Tradernet
-//
-//  Created by Bogdan Vasilinchuk on 6/14/25.
-//
-
 import UIKit
 
 final class MainTableViewManager: NSObject, MainTableManagerInput {
     private let dataSource: MainTableViewDataSource
-    private unowned let tableView: UITableView
+private weak var tableView: UITableView?
 
     init(tableView: UITableView, presenter: MainPresenterProtocol?) {
         self.tableView = tableView
@@ -21,9 +14,5 @@ final class MainTableViewManager: NSObject, MainTableManagerInput {
 
     func configure(with items: [QuoteViewModel]) {
         dataSource.setItems(items)
-    }
-
-    func reload() {
-        tableView.reloadData()
     }
 }

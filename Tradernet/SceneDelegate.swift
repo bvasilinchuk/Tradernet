@@ -7,11 +7,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        // Создаём сервис один раз здесь
-        let socketService = QuotesWebSocketService()
-
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = MainRouter.createModule(socketService: socketService)
+        window.rootViewController = MainModuleBuilder.createModule()
         self.window = window
         window.makeKeyAndVisible()
     }

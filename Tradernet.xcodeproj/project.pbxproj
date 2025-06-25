@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8263114E2DFDCE6900B5CA51 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8263114D2DFDCE6900B5CA51 /* SnapKit */; };
+		826311532DFF27E200B5CA51 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 826311522DFF27E200B5CA51 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,16 +53,6 @@
 			path = Tradernet;
 			sourceTree = "<group>";
 		};
-		826310C32DFC9C0700B5CA51 /* TradernetTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TradernetTests;
-			sourceTree = "<group>";
-		};
-		826310CD2DFC9C0700B5CA51 /* TradernetUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TradernetUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				826311532DFF27E200B5CA51 /* Kingfisher in Frameworks */,
 				8263114E2DFDCE6900B5CA51 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,8 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				826310AC2DFC9C0400B5CA51 /* Tradernet */,
-				826310C32DFC9C0700B5CA51 /* TradernetTests */,
-				826310CD2DFC9C0700B5CA51 /* TradernetUITests */,
 				826310AB2DFC9C0400B5CA51 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -131,6 +121,7 @@
 			name = Tradernet;
 			packageProductDependencies = (
 				8263114D2DFDCE6900B5CA51 /* SnapKit */,
+				826311522DFF27E200B5CA51 /* Kingfisher */,
 			);
 			productName = Tradernet;
 			productReference = 826310AA2DFC9C0400B5CA51 /* Tradernet.app */;
@@ -148,9 +139,6 @@
 			);
 			dependencies = (
 				826310C22DFC9C0700B5CA51 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				826310C32DFC9C0700B5CA51 /* TradernetTests */,
 			);
 			name = TradernetTests;
 			packageProductDependencies = (
@@ -171,9 +159,6 @@
 			);
 			dependencies = (
 				826310CC2DFC9C0700B5CA51 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				826310CD2DFC9C0700B5CA51 /* TradernetUITests */,
 			);
 			name = TradernetUITests;
 			packageProductDependencies = (
@@ -216,6 +201,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				8263114C2DFDCE6900B5CA51 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				826311512DFF27E200B5CA51 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 826310AB2DFC9C0400B5CA51 /* Products */;
@@ -588,6 +574,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		826311512DFF27E200B5CA51 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -595,6 +589,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8263114C2DFDCE6900B5CA51 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		826311522DFF27E200B5CA51 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 826311512DFF27E200B5CA51 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
