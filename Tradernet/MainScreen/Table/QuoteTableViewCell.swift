@@ -79,6 +79,7 @@ final class QuoteTableViewCell: UITableViewCell {
     
     private func setupStyles() {
         selectionStyle = .none
+        accessoryType = .disclosureIndicator
         
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.clipsToBounds = true
