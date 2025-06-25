@@ -1,7 +1,7 @@
 import Foundation
 
 protocol NetworkServiceProtocol {
-    func getTopSecurities(completion: @escaping (Result<[Security], Error>) -> Void)
+    func getTopSecurities(completion: @escaping (Result<SecuritiesModel, Error>) -> Void)
 }
 
 enum Endpoint: String {
@@ -12,12 +12,6 @@ enum Endpoint: String {
     }
 }
 
-struct Security: Decodable {
-    let symbol: String
-    let name: String?
-    let price: Double?
-}
-
 final class NetworkService: NetworkServiceProtocol {
     private let session: URLSession
 
@@ -25,7 +19,7 @@ final class NetworkService: NetworkServiceProtocol {
         self.session = session
     }
 
-    func getTopSecurities(completion: @escaping (Result<[Security], Error>) -> Void) {
+    func getTopSecurities(completion: @escaping (Result<SecuritiesModel, Error>) -> Void) {
         guard let url = Endpoint.topSecurities.url else {
             completion(.failure(NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -56,18 +50,36 @@ final class NetworkService: NetworkServiceProtocol {
                     return
                 }
 
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    completion(.failure(NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
+                    return
+                }
+
                 guard let data = data else {
                     completion(.failure(NSError(domain: "NetworkService", code: 0, userInfo: [NSLocalizedDescriptionKey: "No data"])))
                     return
                 }
 
+                guard (200...299).contains(httpResponse.statusCode) else {
+                    completion(.failure(self.parseAPIError(from: data, fallbackCode: httpResponse.statusCode)))
+                    return
+                }
+
                 do {
-                    let decoded = try JSONDecoder().decode([Security].self, from: data)
+                    let decoded = try JSONDecoder().decode(SecuritiesModel.self, from: data)
                     completion(.success(decoded))
                 } catch {
-                    completion(.failure(error))
+                    completion(.failure(self.parseAPIError(from: data, fallbackCode: -2)))
                 }
             }
         }.resume()
+    }
+    
+    private func parseAPIError(from data: Data, fallbackCode: Int) -> Error {
+        if let apiError = try? JSONDecoder().decode(APIErrorResponse.self, from: data) {
+            return NSError(domain: "NetworkService", code: apiError.code, userInfo: [NSLocalizedDescriptionKey: apiError.errMsg])
+        } else {
+            return NSError(domain: "NetworkService", code: fallbackCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error \(fallbackCode)"])
+        }
     }
 }

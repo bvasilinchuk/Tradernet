@@ -1,10 +1,13 @@
 import UIKit
 
-protocol MainViewProtocol: AnyObject {
+protocol MainViewInputProtocol: AnyObject {
     func reloadData()
+    func showError(message: String, errorType: MainViewErrorType)
+    func showLoader()
+    func hideLoader()
 }
 
-class MainViewController: UIViewController, MainViewProtocol {
+class MainViewController: UIViewController {
     private let presenter: MainPresenterProtocol
 
     init(presenter: MainPresenterProtocol) {
@@ -21,21 +24,68 @@ class MainViewController: UIViewController, MainViewProtocol {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTableView()
+        addSubviews()
+        makeConstraints()
+        view.backgroundColor = .systemBackground
         presenter.viewDidLoad()
     }
-
-    private func setupTableView() {
+    
+    private func addSubviews() {
+        view.addSubview(activityIndicator)
         view.addSubview(tableView)
-        tableView.frame = view.bounds
     }
+    
+    private func makeConstraints() {
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+        }
+    }
+}
 
+extension MainViewController: MainViewInputProtocol {
     func reloadData() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    func showError(message: String, errorType: MainViewErrorType) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок", style: .default))
+        switch errorType {
+        case .socketError:
+            alert.addAction(UIAlertAction(title: "Try again", style: .default, handler: { _ in
+                self.presenter.subscribeToDefaultQuotes()
+            }))
+        case .stockListError:
+            alert.addAction(UIAlertAction(title: "Use default list of stocks", style: .default, handler: { _ in
+                self.presenter.subscribeToDefaultQuotes()
+            }))
+        }
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showLoader() {
+        activityIndicator.startAnimating()
+    }
+
+    func hideLoader() {
+        activityIndicator.stopAnimating()
     }
 }

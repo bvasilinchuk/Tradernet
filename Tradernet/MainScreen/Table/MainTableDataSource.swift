@@ -1,11 +1,3 @@
-//
-//  MainTableViewDataSource.swift
-//  Tradernet
-//
-//  Created by Bogdan Vasilinchuk on 6/14/25.
-//
-
-
 import UIKit
 
 final class MainTableViewDataSource: NSObject, UITableViewDataSource {

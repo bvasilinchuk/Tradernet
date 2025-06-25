@@ -2,57 +2,60 @@ class QuoteViewModel {
     let ticker: String
     let name: String
     let exchange: String
-    let lastPrice: String
-    let changeValue: String
-    let changePercent: Double
-    let isPositiveChange: Bool
+    var lastPrice: Double
+    var changeValue: Double
+    var changePercent: Double
     var percentChangeType: PercentChangeType = .noChange
-    let model: QuoteModel
+    let decimalPlaces: Int
+    
+    init(model: QuoteModel, decimalPlaces: Int = 2) {
+        ticker = model.symbol
+        name = model.name ?? ""
+        exchange = model.exchange ?? ""
+        lastPrice = model.lastPrice ?? 0
+        changeValue = model.change ?? 0
+        changePercent = model.percentChange ?? 0
+        self.decimalPlaces = decimalPlaces
+    }
+    
+    var lastPriceString: String {
+        String(format: "%.\(decimalPlaces)f", lastPrice)
+    }
+    
+    var changeValueString: String {
+        String(format: "%+.\(decimalPlaces)f", changeValue)
+    }
     
     var changePercentString: String {
-        return String(format: "%+.2f%%", changePercent)
+        String(format: "%+.2f%%", changePercent)
     }
-
-    init(model: QuoteModel, decimalPlaces: Int = 2) {
-        self.model = model
-        self.ticker = model.symbol
-        self.name = model.name ?? ""
-        self.exchange = model.exchange ?? ""
-
-        if let price = model.lastPrice {
-            self.lastPrice = String(format: "%.\(decimalPlaces)f", price)
-        } else {
-            self.lastPrice = "-"
-        }
-
-        if let chg = model.change {
-            self.changeValue = String(format: "%+.\(decimalPlaces)f", chg)
-        } else {
-            self.changeValue = ""
-        }
-
-        if let pcp = model.percentChange {
-            self.changePercent = pcp
-            self.isPositiveChange = pcp >= 0
-        } else {
-            self.changePercent = 0
-            self.isPositiveChange = true
-        }
+    
+    var isPositivePercentChange: Bool {
+        changePercent >= 0
     }
 }
 
 extension QuoteViewModel {
-    func merging(with newModel: QuoteModel, decimalPlaces: Int) -> QuoteViewModel {
-        return QuoteViewModel(model: QuoteModel(
-            symbol: newModel.symbol,
-            name: name,
-            exchange: exchange,
-            lastPrice: newModel.lastPrice ?? model.lastPrice,
-            change: newModel.change ?? model.change,
-            percentChange: newModel.percentChange ?? model.percentChange,
-            bid: newModel.bid ?? model.bid,
-            ask: newModel.ask ?? model.ask,
-            volume: newModel.volume ?? model.volume
-        ), decimalPlaces: decimalPlaces)
+    func update(from model: QuoteModel) {
+        if let price = model.lastPrice {
+            if price > lastPrice {
+                percentChangeType = .positive
+            } else if price < lastPrice {
+                percentChangeType = .negative
+            } else {
+                percentChangeType = .noChange
+            }
+            lastPrice = price
+        } else {
+            percentChangeType = .noChange
+        }
+        
+        if let chg = model.change {
+            changeValue = chg
+        }
+        
+        if let pcp = model.percentChange {
+            changePercent = pcp
+        }
     }
 }
