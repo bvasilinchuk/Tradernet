@@ -1,5 +1,9 @@
 import UIKit
 
+protocol MainTableManagerInput: AnyObject {
+    func configure(with items: [QuoteViewModel])
+}
+
 final class MainTableViewManager: NSObject, MainTableManagerInput {
     private let dataSource: MainTableViewDataSource
 private weak var tableView: UITableView?

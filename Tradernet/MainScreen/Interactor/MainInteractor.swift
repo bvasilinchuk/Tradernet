@@ -1,6 +1,7 @@
 protocol MainInteractorInputProtocol: AnyObject {
     func getTopSecurities()
     func subscribeToQuotes(tickers: [String]?)
+    func disconnectFromQuotes()
 }
 
 protocol MainInteractorOutputProtocol: AnyObject {

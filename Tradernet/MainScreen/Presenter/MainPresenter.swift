@@ -1,9 +1,5 @@
 import Foundation
 
-protocol MainTableManagerInput: AnyObject {
-    func configure(with items: [QuoteViewModel])
-}
-
 protocol MainPresenterProtocol: AnyObject {
     func viewDidLoad()
     func subscribeToDefaultQuotes()
@@ -12,8 +8,17 @@ protocol MainPresenterProtocol: AnyObject {
 
 class MainPresenter: MainPresenterProtocol {
     weak var view: MainViewInputProtocol?
-    var interactor: MainInteractorInputProtocol?
-    var router: MainRouterProtocol?
+    var interactor: MainInteractorInputProtocol
+    var router: MainRouterProtocol
+
+    init(interactor: MainInteractorInputProtocol, router: MainRouterProtocol) {
+        self.interactor = interactor
+        self.router = router
+    }
+
+    deinit {
+        interactor.disconnectFromQuotes()
+    }
 
     private var tickers: [String] = []
     private var quotes: [String: QuoteViewModel] = [:]
@@ -23,15 +28,15 @@ class MainPresenter: MainPresenterProtocol {
 
     func viewDidLoad() {
         view?.showLoader()
-        interactor?.getTopSecurities()
+        interactor.getTopSecurities()
     }
     
     func subscribeToDefaultQuotes() {
-        interactor?.subscribeToQuotes(tickers: nil)
+        interactor.subscribeToQuotes(tickers: nil)
     }
     
     func resubscribeToQuotes() {
-        interactor?.subscribeToQuotes(tickers: tickers)
+        interactor.subscribeToQuotes(tickers: tickers)
     }
 }
 
@@ -63,7 +68,7 @@ extension MainPresenter: MainInteractorOutputProtocol {
     func didGetTopSecurities(securities: SecurityViewModel) {
         view?.hideLoader()
         tickers = securities.tickers
-        interactor?.subscribeToQuotes(tickers: securities.tickers)
+        interactor.subscribeToQuotes(tickers: securities.tickers)
     }
     
     func didNotGetTopSecurities(error: String) {
