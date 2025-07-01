@@ -4,14 +4,6 @@ protocol NetworkServiceProtocol {
     func getTopSecurities(completion: @escaping (Result<SecuritiesModel, Error>) -> Void)
 }
 
-enum Endpoint: String {
-    case topSecurities = "https://tradernet.com/tradernet-api/quotes-get-top-securities"
-
-    var url: URL? {
-        return URL(string: self.rawValue)
-    }
-}
-
 final class NetworkService: NetworkServiceProtocol {
     private let session: URLSession
 
@@ -20,30 +12,25 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     func getTopSecurities(completion: @escaping (Result<SecuritiesModel, Error>) -> Void) {
-        guard let url = Endpoint.topSecurities.url else {
-            completion(.failure(NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
         let parameters: [String: Any] = [
-            "type": "stocks",
-            "exchange": "russia",
-            "gainers": 0,
-            "limit": 30
+            "cmd": "getTopSecurities",
+            "params": [
+                "type": "stocks",
+                "exchange": "russia",
+                "gainers": 0,
+                "limit": 30
+            ]
         ]
-
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
-        } catch {
-            completion(.failure(error))
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: parameters, options: []),
+              let jsonString = String(data: jsonData, encoding: .utf8),
+              let encodedQuery = jsonString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "https://tradernet.com/api/?q=\(encodedQuery)") else {
+            completion(.failure(NSError(domain: "NetworkService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL or parameters"])))
             return
         }
 
-        session.dataTask(with: request) { data, response, error in
+        session.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
                     completion(.failure(error))
